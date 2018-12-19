@@ -22,9 +22,15 @@ class ViewController: UIViewController {
     //Will hold the ARFaceAnchor - which has information about the pose, topology, and expression of a face detected in a face-tracking AR session.
     var faceNode: SCNNode?
     
+    //The virtual phone
+    var virtualPhoneNode: SCNNode?
+    
+    //iPhone xs max point size
+    let phoneScreenPointSize = CGSize(width: 414, height: 896)
     // MARK: - Outlets
     @IBOutlet var sceneView: ARSCNView!
     
+    @IBOutlet weak var eyeTracker: UIImageView!
     @IBOutlet weak var messageLabel: UILabel!
     
     // MARK: - Methods
@@ -70,6 +76,8 @@ class ViewController: UIViewController {
     }
 }
 
+
+
 // MARK: - ARSCNViewDelegate
 extension ViewController: ARSCNViewDelegate {
     // Tag: SceneKit Renderer
@@ -99,6 +107,13 @@ extension ViewController: ARSCNViewDelegate {
         guard let faceAnchor = anchor as? ARFaceAnchor,
             let faceGeometry = node.geometry as? ARSCNFaceGeometry else {
                 return
+        }
+        DispatchQueue.main.async {
+            let yTransform = (-(faceAnchor.lookAtPoint.y / 0.2) * 896)
+//            let xTransform = ((faceAnchor.lookAtPoint.x / 0.2) * 414)
+//            CGFloat(xTransform)
+            self.eyeTracker.transform = CGAffineTransform(translationX: 0, y: CGFloat(yTransform))
+            self.updateMessage(text: "X: \(faceAnchor.lookAtPoint.x) d Y: \(faceAnchor.lookAtPoint.y)")
         }
         
         faceGeometry.update(from: faceAnchor.geometry)
@@ -130,7 +145,6 @@ private extension ViewController {
     func setupScence() {
         //Sets the views delegate to self
         sceneView.delegate = self
-        
         //Shows statistics such as fps and timing information
         sceneView.showsStatistics = true
         
