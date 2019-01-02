@@ -112,7 +112,10 @@ extension ViewController: ARSCNViewDelegate {
             let yTransform = (-(faceAnchor.lookAtPoint.y / 0.2) * 896)
 //            let xTransform = ((faceAnchor.lookAtPoint.x / 0.2) * 414)
 //            CGFloat(xTransform)
-            self.eyeTracker.transform = CGAffineTransform(translationX: 0, y: CGFloat(yTransform))
+            if yTransform > -438 && yTransform < 390 {
+                self.eyeTracker.transform = CGAffineTransform(translationX: 0, y: CGFloat(yTransform))
+            }
+            
             self.updateMessage(text: "X: \(faceAnchor.lookAtPoint.x) d Y: \(faceAnchor.lookAtPoint.y)")
         }
         
